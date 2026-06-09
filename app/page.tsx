@@ -48,7 +48,7 @@ export default function Home() {
           Full Stack Developer
         </p>
         <h1 className="text-5xl md:text-6xl font-bold mb-4">
-          Hi, I&apos;m <span className="text-blue-600">Mohidul Islam</span>
+          Hi, I&apos;m <span className="text-blue-600">Sakib Islam</span>
         </h1>
         <p className="text-lg text-gray-500 max-w-xl mb-8">
           Building fast, clean & modern web apps with React, Next.js, Node.js
