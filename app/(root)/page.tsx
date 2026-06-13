@@ -1,7 +1,8 @@
 "use client";
+import Address from "@/components/Address";
+import Navbar from "@/components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
-import Navbar from "./components/Navbar";
 
 export default function Home() {
   const projectArray = [
@@ -33,14 +34,14 @@ export default function Home() {
 
   return (
     <div className="bg-gray-50 text-gray-800">
-      {/* Navbar */}
-      <Navbar />
       {/* hero */}
-      <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 bg-gradient-to-br from-blue-50 to-white">
-        <img
+      <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 bg-linear-to-br from-blue-50 to-white">
+        <Image
           src="/profile_aqwf8h.webp"
           alt="Mohidul Islam"
-          className="w-44 h-44 rounded-full border-4 border-blue-500 shadow-xl mb-6 object-cover"
+          width={176}
+          height={176}
+          className="rounded-full border-4 border-blue-500 shadow-xl mb-6 object-cover"
         />
         <p className="text-blue-600 font-semibold tracking-widest uppercase text-sm mb-2">
           Full Stack Developer
@@ -117,19 +118,29 @@ export default function Home() {
       </div>
       <section className="p-4 flex gap-x-4">
         {projectArray.map((project) => (
-          <div className="border border-gray-400 rounded p-4" key={project.id}>
-            <p>{project.title}</p>
+          <div
+            key={project.id}
+            className="border border-gray-300 p-4 rounded-lg shadow-md"
+          >
+            <h2 className="text-lg font-semibold">{project.title}</h2>
             <Link
-              className="border border-gray-400 rounded p-1"
-              href={`/project/${project.id}`}
+              href={`/projects/${project.id}`}
+              className="text-blue-600 hover:underline"
             >
-              {" "}
-              Details{" "}
+              View Project
             </Link>
           </div>
         ))}
       </section>
-
+      <Address
+        address={{
+          name: "John Doe",
+          street: "123 Main St",
+          city: "Anytown",
+          state: "CA",
+          zip: "12345",
+        }}
+      />
       {/* Footer  */}
       <footer className="bg-blue-900 text-white py-5 text-center text-sm">
         <p>© 2026 Mohidul Islam. All Rights Reserved.</p>
