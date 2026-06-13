@@ -1,42 +1,40 @@
+"use client";
 import Image from "next/image";
+import Link from "next/link";
+import Navbar from "./components/Navbar";
 
 export default function Home() {
+  const projectArray = [
+    {
+      id: "1",
+      title: "E-Commerce Website",
+    },
+    {
+      id: "2",
+      title: "Portfolio Website",
+    },
+    {
+      id: "3",
+      title: "Food Delivery App",
+    },
+    {
+      id: "4",
+      title: "Food Delivery App 4",
+    },
+    {
+      id: "5",
+      title: "Food Delivery App 5",
+    },
+  ];
+  const myFun = (index: string) => {
+    const indexNum = parseInt(index);
+    alert(projectArray[indexNum].title);
+  };
+
   return (
     <div className="bg-gray-50 text-gray-800">
       {/* Navbar */}
-      <nav className="flex items-center justify-between px-8 py-4 bg-blue-900 text-white sticky top-0 z-50 shadow-lg">
-        <h1 className="text-2xl font-bold tracking-wide">
-          Mohidul<span className="text-blue-300">.</span>
-        </h1>
-        <ul className="hidden md:flex gap-8 font-medium">
-          <li>
-            <a
-              href="index.html"
-              className="text-blue-300 border-b-2 border-blue-300 pb-0.5"
-            >
-              Home
-            </a>
-          </li>
-          <li>
-            <a href="about.html">About</a>
-          </li>
-          <li>
-            <a href="projects.html">Projects</a>
-          </li>
-          <li>
-            <a href="contact.html">Contact</a>
-          </li>
-        </ul>
-        <div className="flex gap-4 text-sm">
-          <a href="#" className="hover:text-blue-300">
-            Facebook
-          </a>
-          <a href="#" className="hover:text-blue-300">
-            GitHub
-          </a>
-        </div>
-      </nav>
-
+      <Navbar />
       {/* hero */}
       <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 bg-gradient-to-br from-blue-50 to-white">
         <img
@@ -89,6 +87,47 @@ export default function Home() {
             Tailwind CSS
           </span>
         </div>
+      </section>
+      {/* projects */}
+      <div className="flex justify-center items-center my-10">
+        <button
+          onClick={() => {
+            myFun("0");
+          }}
+          className="border border-amber-700 rounded-2xl p-2 hover:bg-amber-700 hover:text-white  "
+        >
+          Click Me 0
+        </button>
+        <button
+          onClick={() => {
+            myFun("1");
+          }}
+          className="border border-amber-700 rounded-2xl p-2 hover:bg-amber-700 hover:text-white  "
+        >
+          Click Me 1
+        </button>
+        <button
+          onClick={() => {
+            myFun("2");
+          }}
+          className="border border-amber-700 rounded-2xl p-2 hover:bg-amber-700 hover:text-white  "
+        >
+          Click Me 2
+        </button>
+      </div>
+      <section className="p-4 flex gap-x-4">
+        {projectArray.map((project) => (
+          <div className="border border-gray-400 rounded p-4" key={project.id}>
+            <p>{project.title}</p>
+            <Link
+              className="border border-gray-400 rounded p-1"
+              href={`/project/${project.id}`}
+            >
+              {" "}
+              Details{" "}
+            </Link>
+          </div>
+        ))}
       </section>
 
       {/* Footer  */}
