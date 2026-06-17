@@ -1,8 +1,18 @@
 import React from "react";
 
-const Address = ({ address }: any) => {
+const Address = ({
+  address,
+}: {
+  address: {
+    name: string;
+    street: string;
+    city: string;
+    state: string;
+    zip: string;
+  };
+}) => {
   return (
-    <div className="flex items-center justify-center bg-gradient-to-br from-slate-100 to-blue-50 p-4">
+    <div className="flex items-center justify-center bg-linear-to-br from-slate-100 to-blue-50 p-4">
       <div className="bg-white rounded-2xl shadow-lg p-6 w-80 border border-slate-200">
         <div className="flex items-center gap-2 mb-4">
           <div className="bg-blue-100 text-blue-600 p-2 rounded-full">

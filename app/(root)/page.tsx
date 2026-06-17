@@ -1,37 +1,24 @@
 "use client";
 import Address from "@/components/Address";
-import Navbar from "@/components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
+import useSWR from "swr";
 
 export default function Home() {
-  const projectArray = [
-    {
-      id: "1",
-      title: "E-Commerce Website",
-    },
-    {
-      id: "2",
-      title: "Portfolio Website",
-    },
-    {
-      id: "3",
-      title: "Food Delivery App",
-    },
-    {
-      id: "4",
-      title: "Food Delivery App 4",
-    },
-    {
-      id: "5",
-      title: "Food Delivery App 5",
-    },
-  ];
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const {
+    data: projectArray,
+    isLoading,
+    error,
+  } = useSWR("/api/projects", fetcher);
+
   const myFun = (index: string) => {
     const indexNum = parseInt(index);
     alert(projectArray[indexNum].title);
   };
 
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error loading projects.</p>;
   return (
     <div className="bg-gray-50 text-gray-800">
       {/* hero */}
@@ -89,58 +76,45 @@ export default function Home() {
           </span>
         </div>
       </section>
-      {/* projects */}
-      <div className="flex justify-center items-center my-10">
-        <button
-          onClick={() => {
-            myFun("0");
-          }}
-          className="border border-amber-700 rounded-2xl p-2 hover:bg-amber-700 hover:text-white  "
-        >
-          Click Me 0
-        </button>
-        <button
-          onClick={() => {
-            myFun("1");
-          }}
-          className="border border-amber-700 rounded-2xl p-2 hover:bg-amber-700 hover:text-white  "
-        >
-          Click Me 1
-        </button>
-        <button
-          onClick={() => {
-            myFun("2");
-          }}
-          className="border border-amber-700 rounded-2xl p-2 hover:bg-amber-700 hover:text-white  "
-        >
-          Click Me 2
-        </button>
-      </div>
-      <section className="p-4 flex gap-x-4">
-        {projectArray.map((project) => (
-          <div
-            key={project.id}
-            className="border border-gray-300 p-4 rounded-lg shadow-md"
-          >
-            <h2 className="text-lg font-semibold">{project.title}</h2>
-            <Link
-              href={`/projects/${project.id}`}
-              className="text-blue-600 hover:underline"
+
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        {projectArray.map(
+          (project: { _id: string; title: string; link: string }) => (
+            <div
+              key={project._id}
+              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
             >
-              View Project
-            </Link>
-          </div>
-        ))}
+              {/* Background Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+              {/* Icon */}
+              <div className="relative z-10 mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md">
+                🚀
+              </div>
+
+              {/* Title */}
+              <h2 className="relative z-10 mb-3 text-xl font-bold text-slate-800">
+                {project.title}
+              </h2>
+
+              {/* Description */}
+              <p className="relative z-10 mb-5 text-sm text-slate-500">
+                Explore the project details, features, and implementation.
+              </p>
+
+              {/* Button */}
+              <Link
+                href={`/projects/${project._id}`}
+                className="relative z-10 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-5 py-2.5 font-medium text-white transition-all duration-300 hover:gap-3 hover:shadow-lg"
+              >
+                View Project
+                <span>→</span>
+              </Link>
+            </div>
+          )
+        )}
       </section>
-      <Address
-        address={{
-          name: "John Doe",
-          street: "123 Main St",
-          city: "Anytown",
-          state: "CA",
-          zip: "12345",
-        }}
-      />
+
       {/* Footer  */}
       <footer className="bg-blue-900 text-white py-5 text-center text-sm">
         <p>© 2026 Mohidul Islam. All Rights Reserved.</p>
