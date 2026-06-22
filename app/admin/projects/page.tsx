@@ -1,137 +1,159 @@
 "use client";
+
 import { fetcher } from "@/app/share/fetch";
-import React, { useState } from "react";
+import ProjectModal from "@/components/ProjectModal";
+import { ExternalLink, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
 import useSWR from "swr";
 
-const Page = () => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [link, setLink] = useState("");
+export default function Page() {
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
 
-  const { data: projects, isLoading, error } = useSWR("/api/projects", fetcher);
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    data: projects,
+    isLoading,
+    error,
+    mutate,
+  } = useSWR("/api/projects", fetcher);
 
-    const data = {
-      title,
-      description,
-      link,
-    };
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this project?"
+    );
+
+    if (!confirmDelete) return;
 
     try {
-      const response = await fetch("/api/projects", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+      const response = await fetch(`/api/projects/${id}`, {
+        method: "DELETE",
       });
 
       if (response.ok) {
-        alert("Project created successfully");
-        setTitle("");
-        setDescription("");
-        setLink("");
+        await mutate();
       } else {
-        alert("Failed to create Project");
+        alert("Failed to delete project");
       }
     } catch (error) {
-      console.error("Error creating Project:", error);
+      console.error(error);
+      alert("Something went wrong");
     }
   };
+
+  if (error) {
+    return (
+      <div className="p-10 text-center text-red-500">
+        Failed to load projects
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-indigo-50 p-6">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
+      {/* Header */}
+      <div className="max-w-6xl mx-auto mb-8">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-slate-800">
+            Projects Management
+          </h1>
 
-        {/* Form Card */}
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-          <div className="bg-gradient-to-r from-indigo-600 to-violet-600 px-8 py-5">
-            <h2 className="text-xl font-semibold text-white">
-              Create New Project
-            </h2>
-            <p className="text-indigo-100 text-sm mt-1">
-              Fill in the details below.
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-8 space-y-6">
-            <div>
-              <label
-                htmlFor="title"
-                className="block mb-2 font-medium text-gray-700"
-              >
-                Project Title
-              </label>
-
-              <input
-                type="text"
-                id="title"
-                placeholder="Enter project title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition-all focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="description"
-                className="block mb-2 font-medium text-gray-700"
-              >
-                Description
-              </label>
-
-              <textarea
-                rows={5}
-                id="description"
-                placeholder="Write project description..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none resize-none transition-all focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="link"
-                className="block mb-2 font-medium text-gray-700"
-              >
-                Project Link
-              </label>
-
-              <input
-                type="url"
-                id="link"
-                placeholder="https://example.com"
-                value={link}
-                onChange={(e) => setLink(e.target.value)}
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition-all focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
-            >
-              Create Project 🚀
-            </button>
-          </form>
+          <button
+            onClick={() => {
+              setSelectedProject(null);
+              setOpenModal(true);
+            }}
+            className="rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white shadow-lg hover:bg-indigo-700"
+          >
+            + Create Project
+          </button>
         </div>
       </div>
 
-      <div>
-        <p>Projects List</p>
-        {projects?.map((project: any) => (
-          <div key={project._id}>
-            <p>{project.title}</p>
-            <p>{project.description}</p>
-            <p>{project.link}</p>
+      {/* Project List */}
+      <div className="max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-slate-800">
+            Projects ({projects?.length || 0})
+          </h2>
+        </div>
+
+        {isLoading ? (
+          <div className="text-center py-20">
+            <p className="text-slate-500">Loading projects...</p>
           </div>
-        ))}
+        ) : projects?.length === 0 ? (
+          <div className="bg-white rounded-2xl p-10 text-center border">
+            <p className="text-slate-500">No projects found</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {projects?.map((project: any) => (
+              <div
+                key={project._id}
+                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              >
+                <div className="p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="line-clamp-2 text-lg font-bold text-slate-800">
+                      {project.title}
+                    </h3>
+
+                    <div className="flex items-center gap-2 opacity-0 transition-all group-hover:opacity-100">
+                      <button
+                        onClick={() => {
+                          setSelectedProject(project);
+                          setOpenModal(true);
+                        }}
+                        className="rounded-lg bg-indigo-50 p-2 text-indigo-600 hover:bg-indigo-100"
+                      >
+                        <Pencil size={18} />
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(project._id)}
+                        className="rounded-lg bg-red-50 p-2 text-red-600 hover:bg-red-100"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <p className="mt-3 line-clamp-3 text-sm text-slate-600">
+                    {project.description}
+                  </p>
+
+                  <div className="mt-5 flex items-center justify-between">
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 font-medium text-indigo-600 hover:text-indigo-800"
+                    >
+                      Visit Project
+                      <ExternalLink size={16} />
+                    </a>
+
+                    <span className="text-xs text-slate-400">
+                      {project._id?.slice(-6)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* Modal */}
+      <ProjectModal
+        isOpen={openModal}
+        onClose={() => {
+          setOpenModal(false);
+          setSelectedProject(null);
+        }}
+        project={selectedProject}
+        onSuccess={() => mutate()}
+      />
     </div>
   );
-};
-
-export default Page;
+}

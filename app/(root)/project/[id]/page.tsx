@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "@/app/components/Navbar";
+import Navbar from "@/components/Navbar";
 import { useParams } from "next/navigation";
 
 const Page = () => {
