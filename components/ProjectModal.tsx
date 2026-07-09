@@ -67,7 +67,7 @@ export default function ProjectModal({
         link,
         img: imageUrl,
       };
-
+      console.log(payload);
       const response = await fetch(
         project ? `/api/projects/${project._id}` : "/api/projects",
         {
