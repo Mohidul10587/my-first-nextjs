@@ -9,6 +9,7 @@ type Project = {
   _id: string;
   title: string;
   link: string;
+  img: string;
 };
 
 type Review = {
@@ -174,7 +175,15 @@ export default function Home() {
                 key={project._id}
                 className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl hover:-translate-y-2 transition-all duration-300"
               >
-                <div className="h-48 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600" />
+                <div className="h-48 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
+                  <Image
+                    src={project.img || "/default_project_image.jpg"}
+                    alt={project.title}
+                    width={400}
+                    height={200}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
 
                 <div className="p-6">
                   <h3 className="text-2xl font-bold mb-3">{project.title}</h3>
