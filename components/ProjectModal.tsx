@@ -19,17 +19,22 @@ export default function ProjectModal({
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
   const [loading, setLoading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
 
   useEffect(() => {
     if (project) {
       setTitle(project.title);
       setDescription(project.description);
       setLink(project.link);
+      setImagePreview(project.image || "");
     } else {
       setTitle("No title");
       setDescription("");
       setLink("");
+      setImagePreview("");
     }
+    setImageFile(null);
   }, [project]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,10 +43,29 @@ export default function ProjectModal({
     try {
       setLoading(true);
 
+      // Upload image if a new file was selected
+      let imageUrl = project?.image || "";
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        if (!uploadRes.ok) {
+          const err = await uploadRes.json();
+          alert(err.error || "Image upload failed");
+          return;
+        }
+        const uploadData = await uploadRes.json();
+        imageUrl = uploadData.url;
+      }
+
       const payload = {
         title,
         description,
         link,
+        image: imageUrl,
       };
 
       const response = await fetch(
@@ -101,7 +125,24 @@ export default function ProjectModal({
               Project Image
             </label>
 
-            <input type="file" accept="image/*" />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="mb-3 h-40 w-full rounded-xl object-cover border"
+              />
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                setImageFile(file);
+                setImagePreview(URL.createObjectURL(file));
+              }}
+              className="w-full rounded-xl border p-3"
+            />
           </div>
 
           <div>
