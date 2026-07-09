@@ -176,7 +176,7 @@ export default function Home() {
                 className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl hover:-translate-y-2 transition-all duration-300"
               >
                 <div className="h-48 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
-                  <Image
+                  <img
                     src={project.img || "/default_project_image.jpg"}
                     alt={project.title}
                     width={400}
