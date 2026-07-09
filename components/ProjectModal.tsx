@@ -65,7 +65,7 @@ export default function ProjectModal({
         title,
         description,
         link,
-        image: imageUrl,
+        img: imageUrl,
       };
 
       const response = await fetch(
