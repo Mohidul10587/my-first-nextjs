@@ -1,7 +1,11 @@
 import { connectDB } from "@/lib/db";
 import { Project } from "@/lib/models/Project";
+import { requireAdmin } from "@/lib/authGuard";
 
 export const POST = async (req: Request) => {
+  const authError = await requireAdmin();
+  if (authError) return authError;
+
   await connectDB();
   const projects = await Project.find();
   if (projects.length >= 10) {

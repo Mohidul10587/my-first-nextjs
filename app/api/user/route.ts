@@ -2,10 +2,14 @@ import { connectDB } from "@/lib/db";
 import { User } from "@/lib/models/User";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { requireAdmin } from "@/lib/authGuard";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export const GET = async () => {
+  const authError = await requireAdmin();
+  if (authError) return authError;
+
   await connectDB();
   const users = await User.find({}, { password: 0 }); // exclude password
   return new Response(JSON.stringify(users), { status: 200 });
@@ -38,6 +42,9 @@ export const POST = async (req: Request) => {
 };
 
 export const PATCH = async (req: Request) => {
+  const authError = await requireAdmin();
+  if (authError) return authError;
+
   await connectDB();
   const { id, role } = await req.json();
 
@@ -47,7 +54,11 @@ export const PATCH = async (req: Request) => {
     });
   }
 
-  const updated = await User.findByIdAndUpdate(id, { role }, { new: true, select: "-password" });
+  const updated = await User.findByIdAndUpdate(
+    id,
+    { role },
+    { new: true, select: "-password" }
+  );
 
   if (!updated) {
     return new Response(JSON.stringify({ error: "User not found" }), {

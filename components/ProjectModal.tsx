@@ -98,6 +98,14 @@ export default function ProjectModal({
 
           <div>
             <label className="mb-2 block text-sm font-medium">
+              Project Image
+            </label>
+
+            <input type="file" accept="image/*" />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium">
               Description
             </label>
 

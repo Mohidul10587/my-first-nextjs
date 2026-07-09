@@ -2,6 +2,7 @@ import { model, models, Schema } from "mongoose";
 
 const ProjectSchema = new Schema({
   title: { type: String, required: true },
+  img: { type: String },
   description: { type: String },
   link: { type: String, required: true },
 });
