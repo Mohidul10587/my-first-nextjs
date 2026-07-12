@@ -3,10 +3,12 @@
 import { fetcher } from "@/app/share/fetch";
 import ProjectModal from "@/components/ProjectModal";
 import { ExternalLink, Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 export default function Page() {
+  const [searchText, setSearchText] = useState("");
+  const [filteredProjects, setFilteredProjects] = useState<any[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
 
@@ -16,6 +18,14 @@ export default function Page() {
     error,
     mutate,
   } = useSWR("/api/projects", fetcher);
+  useEffect(() => {
+    if (projects) {
+      const filtered = projects.filter((project: any) =>
+        project.title.toLowerCase().includes(searchText.toLowerCase())
+      );
+      setFilteredProjects(filtered);
+    }
+  }, [projects, searchText]);
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
@@ -69,8 +79,18 @@ export default function Page() {
         </div>
       </div>
 
+      <div>
+        <input
+          type="text"
+          value={searchText || ""}
+          placeholder="Search projects..."
+          onChange={(e) => setSearchText(e.target.value)}
+          className="w-full max-w-6xl mx-auto rounded-xl border p-3 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        />
+      </div>
+
       {/* Project List */}
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto mt-4">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-slate-800">
             Projects ({projects?.length || 0})
@@ -87,7 +107,7 @@ export default function Page() {
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {projects?.map((project: any) => (
+            {filteredProjects?.map((project: any) => (
               <div
                 key={project._id}
                 className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
