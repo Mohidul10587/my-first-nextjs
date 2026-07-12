@@ -19,8 +19,13 @@ export const POST = async (req: Request) => {
   return new Response(JSON.stringify(project), { status: 201 });
 };
 
-export const GET = async () => {
+export const GET = async (req: Request) => {
   await connectDB();
-  const projects = await Project.find();
+  const { searchParams } = new URL(req.url);
+  const searchText = searchParams.get("searchText");
+  console.log("This is search text", searchText);
+  const projects = await Project.find({
+    title: { $regex: searchText?.toLocaleLowerCase() || "", $options: "i" },
+  });
   return new Response(JSON.stringify(projects), { status: 200 });
 };

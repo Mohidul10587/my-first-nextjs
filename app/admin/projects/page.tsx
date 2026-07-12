@@ -5,9 +5,15 @@ import ProjectModal from "@/components/ProjectModal";
 import { ExternalLink, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 export default function Page() {
-  const [searchText, setSearchText] = useState("");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [searchText, setSearchText] = useState(
+    searchParams.get("search") || ""
+  );
   const [filteredProjects, setFilteredProjects] = useState<any[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
@@ -17,13 +23,10 @@ export default function Page() {
     isLoading,
     error,
     mutate,
-  } = useSWR("/api/projects", fetcher);
+  } = useSWR(`/api/projects?searchText=${searchText}`, fetcher);
   useEffect(() => {
     if (projects) {
-      const filtered = projects.filter((project: any) =>
-        project.title.toLowerCase().includes(searchText.toLowerCase())
-      );
-      setFilteredProjects(filtered);
+      setFilteredProjects(projects);
     }
   }, [projects, searchText]);
 
@@ -49,7 +52,19 @@ export default function Page() {
       alert("Something went wrong");
     }
   };
+  const handleSearch = (value: string) => {
+    setSearchText(value);
 
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (value.trim()) {
+      params.set("search", value);
+    } else {
+      params.delete("search");
+    }
+
+    router.replace(`${pathname}?${params.toString()}`);
+  };
   if (error) {
     return (
       <div className="p-10 text-center text-red-500">
@@ -84,7 +99,7 @@ export default function Page() {
           type="text"
           value={searchText || ""}
           placeholder="Search projects..."
-          onChange={(e) => setSearchText(e.target.value)}
+          onChange={(e) => handleSearch(e.target.value)}
           className="w-full max-w-6xl mx-auto rounded-xl border p-3 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         />
       </div>
