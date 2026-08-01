@@ -3,10 +3,11 @@
 import { fetcher } from "@/app/share/fetch";
 import ProjectModal from "@/components/ProjectModal";
 import { ExternalLink, Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import useSWR from "swr";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-export default function Page() {
+
+function ProjectsContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -46,6 +47,7 @@ export default function Page() {
       alert("Something went wrong");
     }
   };
+
   const handleSearch = (value: string) => {
     setSearchText(value);
 
@@ -59,6 +61,7 @@ export default function Page() {
 
     router.replace(`${pathname}?${params.toString()}`);
   };
+
   if (error) {
     return (
       <div className="p-10 text-center text-red-500">
@@ -184,5 +187,13 @@ export default function Page() {
         onSuccess={() => mutate()}
       />
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center text-slate-500">Loading...</div>}>
+      <ProjectsContent />
+    </Suspense>
   );
 }
