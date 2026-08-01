@@ -3,7 +3,7 @@
 import { fetcher } from "@/app/share/fetch";
 import ProjectModal from "@/components/ProjectModal";
 import { ExternalLink, Pencil, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useSWR from "swr";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 export default function Page() {
@@ -14,7 +14,6 @@ export default function Page() {
   const [searchText, setSearchText] = useState(
     searchParams.get("search") || ""
   );
-  const [filteredProjects, setFilteredProjects] = useState<any[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
 
@@ -24,11 +23,6 @@ export default function Page() {
     error,
     mutate,
   } = useSWR(`/api/projects?searchText=${searchText}`, fetcher);
-  useEffect(() => {
-    if (projects) {
-      setFilteredProjects(projects);
-    }
-  }, [projects, searchText]);
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
@@ -122,7 +116,7 @@ export default function Page() {
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredProjects?.map((project: any) => (
+            {projects?.map((project: any) => (
               <div
                 key={project._id}
                 className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
