@@ -19,7 +19,14 @@ type Review = {
 };
 
 export default function Home() {
-  const { data: projects, isLoading, error } = useSWR("/api/projects", fetcher);
+  const {
+    data: projects,
+    isLoading,
+    error,
+  } = useSWR(
+    "https://portfolio-server-u21g.onrender.com/project/getAllProjects",
+    fetcher
+  );
 
   const {
     data: reviews,
