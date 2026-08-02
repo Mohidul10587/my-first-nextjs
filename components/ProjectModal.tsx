@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/app/share/fetch";
 import React, { useEffect, useState } from "react";
 
 interface ProjectModalProps {
@@ -69,7 +70,9 @@ export default function ProjectModal({
       };
       console.log(payload);
       const response = await fetch(
-        project ? `/api/projects/${project._id}` : "/api/projects",
+        project
+          ? `${apiUrl}/project/update/${project._id}`
+          : `${apiUrl}/project/create`,
         {
           method: project ? "PUT" : "POST",
           headers: {

@@ -1,6 +1,6 @@
 "use client";
 
-import { fetcher } from "@/app/share/fetch";
+import { apiUrl, fetcher } from "@/app/share/fetch";
 import ProjectModal from "@/components/ProjectModal";
 import { ExternalLink, Pencil, Trash2 } from "lucide-react";
 import { Suspense, useState } from "react";
@@ -33,7 +33,7 @@ function ProjectsContent() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`/api/projects/${id}`, {
+      const response = await fetch(`${apiUrl}/project/delete/${id}`, {
         method: "DELETE",
       });
 
@@ -192,7 +192,11 @@ function ProjectsContent() {
 
 export default function Page() {
   return (
-    <Suspense fallback={<div className="p-10 text-center text-slate-500">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="p-10 text-center text-slate-500">Loading...</div>
+      }
+    >
       <ProjectsContent />
     </Suspense>
   );

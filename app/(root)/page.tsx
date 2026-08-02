@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import useSWR from "swr";
-import { fetcher } from "../share/fetch";
+import { apiUrl, fetcher } from "../share/fetch";
 
 type Project = {
   _id: string;
@@ -23,10 +23,7 @@ export default function Home() {
     data: projects,
     isLoading,
     error,
-  } = useSWR(
-    "https://portfolio-server-u21g.onrender.com/project/getAllProjects",
-    fetcher
-  );
+  } = useSWR(`${apiUrl}/project/getAllProjects`, fetcher);
 
   const {
     data: reviews,
