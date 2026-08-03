@@ -29,7 +29,7 @@ export default function Home() {
     data: reviews,
     isLoading: reviewLoading,
     error: reviewError,
-  } = useSWR("/api/review", fetcher);
+  } = useSWR(`${apiUrl}/review/getAllReviews`, fetcher);
 
   if (isLoading || reviewLoading) {
     return (

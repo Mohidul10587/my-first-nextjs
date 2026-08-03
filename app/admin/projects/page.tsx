@@ -23,7 +23,10 @@ function ProjectsContent() {
     isLoading,
     error,
     mutate,
-  } = useSWR(`/api/projects?searchText=${searchText}`, fetcher);
+  } = useSWR(
+    `${apiUrl}/project/getAllProjects?searchText=${searchText}`,
+    fetcher
+  );
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
