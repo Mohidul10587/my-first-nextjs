@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/app/share/fetch";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -16,11 +17,12 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/user", {
+      const response = await fetch(`${apiUrl}/user/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(data),
       });
 

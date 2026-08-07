@@ -1,5 +1,6 @@
 "use client";
 
+import { apiUrl } from "@/app/share/fetch";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -16,18 +17,19 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/user/singin", {
+      const response = await fetch(`${apiUrl}/user/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(data),
       });
-      const result = await response.json();
+      const user = await response.json();
       if (response.ok) {
-        console.log("User created:", result);
+        alert("User logged in successfully");
 
-        if (result.user.role === "admin") {
+        if (user.role === "admin") {
           router.push("/admin");
         } else {
           router.push("/");
@@ -35,7 +37,7 @@ const Page = () => {
 
         // Optionally reset form fields or navigate to another page
       } else {
-        alert(result.message);
+        alert(user.message);
         console.error("Failed to create user");
       }
     } catch (error) {

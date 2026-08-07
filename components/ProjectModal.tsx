@@ -78,6 +78,7 @@ export default function ProjectModal({
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify(payload),
         }
       );
