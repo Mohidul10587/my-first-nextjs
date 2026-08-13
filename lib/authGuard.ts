@@ -1,5 +1,6 @@
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET ?? "your_super_secret_key_change_this_in_production"

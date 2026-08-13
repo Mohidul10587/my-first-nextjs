@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { apiUrl } from "@/app/share/fetch";
+import { useSWRConfig } from "swr";
 
 const links = [
   { href: "/admin", label: "Dashboard", icon: "🏠" },
@@ -14,12 +16,21 @@ const links = [
 function SidebarContent({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { mutate } = useSWRConfig();
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const handleLogout = async () => {
-    await fetch("/api/user/logout", { method: "POST" });
+    setLoggingOut(true);
+    await fetch(`${apiUrl}/user/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    // SWR এর সব cached data clear করো — পরের visit এ fresh fetch হবে
+    await mutate(() => true, undefined, { revalidate: false });
     onClose?.();
-    router.push("/sing-in");
+    router.push("/");
     router.refresh();
+    setLoggingOut(false);
   };
 
   return (
@@ -59,10 +70,20 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
       {/* Logout button pinned to bottom */}
       <button
         onClick={handleLogout}
-        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors mt-4 border border-red-500/20"
+        disabled={loggingOut}
+        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 disabled:opacity-60 disabled:cursor-not-allowed transition-colors mt-4 border border-red-500/20"
       >
-        <span>🚪</span>
-        Logout
+        {loggingOut ? (
+          <>
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-red-400/40 border-t-red-400" />
+            Logging out...
+          </>
+        ) : (
+          <>
+            <span>🚪</span>
+            Logout
+          </>
+        )}
       </button>
     </div>
   );
